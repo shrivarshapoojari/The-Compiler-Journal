@@ -19,12 +19,12 @@ theme = "paper"
   # header social icons
  
  
-  linkedin = 'YOUR_LINKEDIN_ID'             # linkedin.com/in/YOUR_LINKEDIN_ID
+  linkedin = 'https://www.linkedin.com/in/shrivarsha-poojary-960691249/'             # linkedin.com/in/YOUR_LINKEDIN_ID
   
   rss = true                                # show rss icon
 
   # home page profile
-  avatar = 'GRAVATAR_EMAIL'                 # gravatar email or image url
+  avatar = 'GRAVATAR_EMAI'                 # gravatar email or image url
   name = 'Shrivarsha Poojary'
   bio = 'YOUR_BIO'
 
