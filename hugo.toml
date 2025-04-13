@@ -8,9 +8,7 @@ theme = "paper"
   [caches.images]
     dir = ':cacheDir/images'
 
-[services]
-  [services.disqus]
-    shortname = 'YOUR_DISQUS_SHORTNAME'     # use disqus comments
+     
 
 [params]
   # color style
