@@ -1,0 +1,31 @@
+baseURL = 'https://shrivarshapoojari.github.io/'
+languageCode = 'en-us'
+title = 'The Compiler Journal'
+theme = "paper"
+
+
+[caches]
+  [caches.images]
+    dir = ':cacheDir/images'
+
+[services]
+  [services.disqus]
+    shortname = 'YOUR_DISQUS_SHORTNAME'     # use disqus comments
+
+[params]
+  # color style
+  color = 'linen'                           # linen, wheat, gray, light
+
+  # header social icons
+ 
+ 
+  linkedin = 'YOUR_LINKEDIN_ID'             # linkedin.com/in/YOUR_LINKEDIN_ID
+  
+  rss = true                                # show rss icon
+
+  # home page profile
+  avatar = 'GRAVATAR_EMAIL'                 # gravatar email or image url
+  name = 'Shrivarsha Poojary'
+  bio = 'YOUR_BIO'
+
+ 
