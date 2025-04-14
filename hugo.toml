@@ -21,13 +21,12 @@ theme = "paper"
  
   linkedin = 'https://www.linkedin.com/in/shrivarsha-poojary-960691249/'             
   github = 'https://github.com/shrivarshapoojari'  
-  rss = true                                
+                                
  
 
 
   avatar = 'shrivarshapoojary8095@gmail.com'                 
   name = 'Shrivarsha Poojary'
-
   
 
  math = true   
