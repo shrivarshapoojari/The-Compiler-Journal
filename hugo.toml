@@ -3,6 +3,8 @@ languageCode = 'en-us'
 title = 'The Compiler Journal'
 theme = "paper"
 
+[pagination]
+  pagerSize = 3
 
 [caches]
   [caches.images]
@@ -12,18 +14,22 @@ theme = "paper"
 
 [params]
   # color style
-  color = 'linen'                           # linen, wheat, gray, light
+  color = 'linen'                          
 
-  # header social icons
  
  
-  linkedin = 'https://www.linkedin.com/in/shrivarsha-poojary-960691249/'             # linkedin.com/in/YOUR_LINKEDIN_ID
-  
-  rss = true                                # show rss icon
+ 
+  linkedin = 'https://www.linkedin.com/in/shrivarsha-poojary-960691249/'             
+  github = 'https://github.com/shrivarshapoojari'  
+  rss = true                                
+ 
 
-  # home page profile
-  avatar = 'GRAVATAR_EMAI'                 # gravatar email or image url
+
+  avatar = 'shrivarshapoojary8095@gmail.com'                 
   name = 'Shrivarsha Poojary'
-  bio = "HI , I'm Shrivarsha from RVCE"
+  bio = "Hi, I’m Shrivarsha, a software enthusiast and student at RV College of Engineering, Bengaluru. I love exploring tech and building projects that solve real-world problems. I enjoy experimenting with new technologies and frameworks to create innovative solutions. When I’m not coding, I’m learning about the latest trends in tech and sharing my journey here. Feel free to explore my thoughts on technology, life, and everything in between!"
 
+
+
+ math = true   
  
