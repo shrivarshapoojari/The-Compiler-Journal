@@ -27,9 +27,7 @@ theme = "paper"
 
   avatar = 'shrivarshapoojary8095@gmail.com'                 
   name = 'Shrivarsha Poojary'
-  bio = 'Hi, I’m Shrivarsha, a software enthusiast and student at RV College of Engineering, Bengaluru. I love exploring tech and building projects that solve real-world problems. When I’m not coding, I’m learning about the latest trends in tech and sharing my journey here. Feel free to explore my thoughts on technology, life, and everything in between!'
-
-
+  
 
  math = true   
  
