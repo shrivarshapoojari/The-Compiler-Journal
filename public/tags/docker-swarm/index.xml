@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Docker Swarm on The Compiler Journal</title>
+    <link>http://localhost:1313/tags/docker-swarm/</link>
+    <description>Recent content in Docker Swarm on The Compiler Journal</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 14 Apr 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/docker-swarm/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Docker for Absolute Beginners: Daily Commands Explained</title>
+      <link>http://localhost:1313/posts/docker-guide/</link>
+      <pubDate>Mon, 14 Apr 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/docker-guide/</guid>
+      <description>&lt;h1 id=&#34;-docker-for-absolute-beginners--the-ultimate-daily-command-guide-with-explanations&#34;&gt;🐳 Docker for Absolute Beginners — The Ultimate Daily Command Guide with Explanations&lt;/h1&gt;&#xA;&lt;p&gt;Whether you&amp;rsquo;re developing applications, deploying services, or just getting started with containers — this guide gives you a complete, beginner-friendly reference for Docker. With real-world examples and all the daily-used commands explained clearly, you&amp;rsquo;re about to Docker like a pro 🚀&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;-what-is-docker&#34;&gt;🧠 What is Docker?&lt;/h2&gt;&#xA;&lt;p&gt;Docker is a tool that lets you package applications with their environment (libraries, OS, dependencies) into portable containers. It helps you:&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

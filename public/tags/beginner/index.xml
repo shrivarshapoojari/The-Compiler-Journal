@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Beginner on The Compiler Journal</title>
-    <link>https://shrivarshapoojari.github.io/tags/beginner/</link>
+    <link>http://localhost:1313/tags/beginner/</link>
     <description>Recent content in Beginner on The Compiler Journal</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 14 Apr 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://shrivarshapoojari.github.io/tags/beginner/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/tags/beginner/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Git and GitHub for Freshers: A Beginner&#39;s Guide</title>
-      <link>https://shrivarshapoojari.github.io/posts/my-first-post/</link>
+      <link>http://localhost:1313/posts/test/</link>
       <pubDate>Mon, 14 Apr 2025 00:00:00 +0000</pubDate>
-      <guid>https://shrivarshapoojari.github.io/posts/my-first-post/</guid>
+      <guid>http://localhost:1313/posts/test/</guid>
       <description>&lt;blockquote&gt;&#xA;&lt;p&gt;🚀 Whether you&amp;rsquo;re building your first project or collaborating on open source, &lt;strong&gt;Git and GitHub&lt;/strong&gt; are essential tools every developer should know. This guide is for absolute beginners.&lt;/p&gt;&lt;/blockquote&gt;&#xA;&lt;hr&gt;&#xA;&lt;h2 id=&#34;-what-is-git&#34;&gt;🧠 What is Git?&lt;/h2&gt;&#xA;&lt;p&gt;&lt;strong&gt;Git&lt;/strong&gt; is a &lt;em&gt;version control system&lt;/em&gt; — like a time machine for your code.&lt;/p&gt;&#xA;&lt;p&gt;It helps you:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Track changes to files&lt;/li&gt;&#xA;&lt;li&gt;Go back to previous versions&lt;/li&gt;&#xA;&lt;li&gt;Collaborate with others without overwriting each other’s work&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;📦 &lt;strong&gt;Real-life analogy:&lt;/strong&gt;&lt;br&gt;&#xA;Think of Git as &lt;strong&gt;Google Docs version history&lt;/strong&gt;, but for code — and way more powerful.&lt;/p&gt;</description>
     </item>
   </channel>

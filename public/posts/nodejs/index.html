@@ -1,0 +1,459 @@
+<!doctype html>
+
+
+
+
+
+
+
+<html
+  class="not-ready lg:text-base"
+  style="--bg:#faf8f1"
+  lang="en-us"
+  dir="ltr"
+><head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, shrink-to-fit=no"
+  />
+
+  
+  <title>Node.js Event Loop: Deep Dive into the Heart of Async-The Compiler Journal</title>
+
+  
+  <meta name="theme-color" />
+
+  <meta name="description" content="The Event Loop is the backbone of Node.js’s non-blocking architecture. It’s the reason why a single-threaded language like JavaScript can handle thousands of concurrent I/O operations.
+This guide will take you through every layer of the Event Loop — from timers and the poll phase to libuv and thread pools — in excruciating detail.
+
+🔄 What is the Event Loop?
+The Event Loop is the mechanism that coordinates and handles the execution of callbacks in JavaScript, especially for asynchronous operations." />
+  <meta name="author" content="Shrivarsha Poojary" /><link rel="preload stylesheet" as="style" href="http://localhost:1313/main.min.css" />
+
+  
+  <link rel="preload" as="image" href="http://localhost:1313/theme.png" />
+
+  <link rel="preload" as="image" href="https://www.gravatar.com/avatar/e18a546fac5bd9c34714db6be798a832?s=160&amp;d=identicon" />
+
+  <link rel="preload" as="image" href="http://localhost:1313/github.svg" /><link rel="preload" as="image" href="http://localhost:1313/linkedin.svg" />
+
+  <script
+    defer
+    src="http://localhost:1313/highlight.min.js"
+    onload="hljs.initHighlightingOnLoad();"
+  ></script><link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css"
+  integrity="sha384-3UiQGuEI4TTMaFmGIZumfRPtfKQ3trwQE2JgosJxCnGmQpL/lJdjpcHkaaFwHlcI"
+  crossorigin="anonymous"
+/>
+<script
+  defer
+  src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js"
+  integrity="sha384-G0zcxDFp5LWZtDuRMnBkk3EphCK1lhEf4UEyEM693ka574TZGwo4IWwS6QLzM/2t"
+  crossorigin="anonymous"
+></script>
+<script
+  defer
+  src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/contrib/auto-render.min.js"
+  integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05"
+  crossorigin="anonymous"
+></script><script>
+  document.addEventListener('DOMContentLoaded', () =>
+    renderMathInElement(document.body, {
+      
+      
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+      ],
+      
+      throwOnError: false,
+    }),
+  );
+</script>
+
+
+  
+  <link
+    rel="icon"
+    href="http://localhost:1313/favicon.ico"
+  />
+  <link
+    rel="apple-touch-icon"
+    href="http://localhost:1313/apple-touch-icon.png"
+  />
+
+  <meta name="generator" content="Hugo 0.146.3">
+</head>
+<body
+    class="bg-(--bg) text-black antialiased duration-200 ease-out [-webkit-tap-highlight-color:transparent] dark:text-white"
+  ><header
+  class="mx-auto flex h-[4.5rem] max-w-(--w) px-8 whitespace-nowrap lg:justify-center"
+>
+  <div class="relative z-50 flex items-center ltr:mr-auto rtl:ml-auto">
+    <a
+      class="-translate-y-[1px] text-2xl font-medium"
+      href="http://localhost:1313/"
+      >The Compiler Journal</a
+    >
+    <div
+      class="btn-dark text-[0px] ltr:ml-4 rtl:mr-4 h-6 w-6 shrink-0 cursor-pointer [background:url(./theme.png)_left_center/_auto_theme('spacing.6')_no-repeat] [transition:_background-position_0.4s_steps(5)] dark:[background-position:right]"
+      role="button"
+      aria-label="Dark"
+    ></div>
+  </div>
+
+  <div
+    class="btn-menu relative z-50 flex h-[4.5rem] w-[5rem] shrink-0 cursor-pointer flex-col items-center justify-center gap-2.5 lg:hidden ltr:-mr-8 rtl:-ml-8"
+    role="button"
+    aria-label="Menu"
+  ></div>
+
+  <script>
+    
+    const htmlClass = document.documentElement.classList;
+    setTimeout(() => {
+      htmlClass.remove('not-ready');
+    }, 10);
+
+    
+    const btnMenu = document.querySelector('.btn-menu');
+    btnMenu.addEventListener('click', () => {
+      htmlClass.toggle('open');
+    });
+
+    
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    const lightBg = '#faf8f1'.replace(/"/g, '');
+    const setDark = (isDark) => {
+      metaTheme.setAttribute('content', isDark ? '#000' : lightBg);
+      htmlClass[isDark ? 'add' : 'remove']('dark');
+      localStorage.setItem('dark', isDark);
+    };
+
+    
+    const darkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    if (htmlClass.contains('dark')) {
+      setDark(true);
+    } else {
+      const darkVal = localStorage.getItem('dark');
+      setDark(darkVal ? darkVal === 'true' : darkScheme.matches);
+    }
+
+    
+    darkScheme.addEventListener('change', (event) => {
+      setDark(event.matches);
+    });
+
+    
+    const btnDark = document.querySelector('.btn-dark');
+    btnDark.addEventListener('click', () => {
+      setDark(localStorage.getItem('dark') !== 'true');
+    });
+  </script>
+
+  <div
+    class="nav-wrapper fixed inset-x-0 top-full z-40 flex h-full flex-col justify-center bg-(--bg) pb-16 duration-200 select-none lg:static lg:h-auto lg:flex-row lg:bg-transparent! lg:pb-0 lg:transition-none"
+  ><nav
+      class="mt-12 flex justify-center space-x-10 lg:mt-0 lg:items-center ltr:lg:ml-14 rtl:space-x-reverse rtl:lg:mr-14 dark:invert"
+    >
+      <a
+        class="h-7 w-7 text-[0px] [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6"
+        style="--url: url(./github.svg)"
+        href="https://github.com/https://github.com/shrivarshapoojari"
+        target="_blank"
+        rel="me"
+      >github</a>
+      <a
+        class="h-7 w-7 text-[0px] [background:var(--url)_center_center/cover_no-repeat] lg:h-6 lg:w-6"
+        style="--url: url(./linkedin.svg)"
+        href="https://linkedin.com/in/https://www.linkedin.com/in/shrivarsha-poojary-960691249/"
+        target="_blank"
+        rel="me"
+      >linkedin</a>
+    </nav>
+  </div>
+</header>
+<main
+      class="prose prose-neutral dark:prose-invert relative mx-auto min-h-[calc(100vh-9rem)] max-w-(--w) px-8 pt-14 pb-16"
+    ><article>
+  <header class="mb-14">
+    <h1 class="my-0! pb-2.5">Node.js Event Loop: Deep Dive into the Heart of Async</h1><div class="text-xs antialiased opacity-60"><time>Apr 15, 2025</time></div></header>
+
+  <section><p>The Event Loop is the backbone of Node.js’s non-blocking architecture. It’s the reason why a single-threaded language like JavaScript can handle thousands of concurrent I/O operations.</p>
+<p>This guide will take you through every layer of the Event Loop — from timers and the poll phase to libuv and thread pools — in excruciating detail.</p>
+<hr>
+<h2 id="-what-is-the-event-loop">🔄 What is the Event Loop?</h2>
+<p>The Event Loop is the mechanism that coordinates and handles the execution of callbacks in JavaScript, especially for asynchronous operations.</p>
+<p>While JavaScript itself is single-threaded, the runtime environment (Node.js or browsers) gives it superpowers by managing async work outside the main thread.</p>
+<hr>
+<h2 id="-why-the-event-loop-matters">❓ Why the Event Loop Matters</h2>
+<p>JavaScript has no <code>sleep()</code> or <code>wait()</code> — it’s designed for responsiveness. The Event Loop allows:</p>
+<ul>
+<li>Non-blocking file I/O</li>
+<li>Concurrency without threads</li>
+<li>Scalable web servers</li>
+<li>Async control flow using promises, async/await</li>
+</ul>
+<p>Without it, Node.js would freeze every time a database query or file read occurred.</p>
+<hr>
+<h2 id="-libuv-the-unsung-hero">⚙️ libuv: The Unsung Hero</h2>
+<p>Node.js relies on an open-source C library called <strong>libuv</strong> to handle:</p>
+<ul>
+<li>File I/O</li>
+<li>TCP/UDP</li>
+<li>Child processes</li>
+<li>Timers</li>
+<li>Thread pools</li>
+<li>Signals</li>
+</ul>
+<p><strong>Key Idea:</strong> JavaScript never actually touches threads — libuv does the heavy lifting.</p>
+<p>libuv internally uses:</p>
+<ul>
+<li>epoll (Linux)</li>
+<li>kqueue (BSD/macOS)</li>
+<li>IOCP (Windows)</li>
+</ul>
+<p>These are efficient, OS-level mechanisms for waiting on multiple I/O operations.</p>
+<hr>
+<h2 id="-event-loop-phases">📁 Event Loop Phases</h2>
+<p>Each iteration of the Event Loop is called a <strong>tick</strong>. Each tick is divided into multiple <strong>phases</strong>, and each phase has a <strong>FIFO queue</strong> of callbacks.</p>
+<h3 id="-phases-in-order">🕐 Phases (in order):</h3>
+<ol>
+<li><strong>Timers Phase</strong></li>
+<li><strong>Pending Callbacks Phase</strong></li>
+<li><strong>Idle, Prepare Phase</strong></li>
+<li><strong>Poll Phase</strong></li>
+<li><strong>Check Phase</strong></li>
+<li><strong>Close Callbacks Phase</strong></li>
+<li><strong>Microtasks (nextTick and Promises)</strong></li>
+</ol>
+<hr>
+<h3 id="-phase-1-timers">🧭 Phase 1: Timers</h3>
+<p>This phase handles:</p>
+<ul>
+<li><code>setTimeout(fn, delay)</code></li>
+<li><code>setInterval(fn, delay)</code></li>
+</ul>
+<p>These are <strong>scheduled</strong>, not exact. Delay is a <em>minimum</em>, not a guarantee.</p>
+<p>Example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">setTimeout</span>(() =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;Timeout after 100ms&#39;</span>);
+</span></span><span style="display:flex;"><span>}, <span style="color:#ae81ff">100</span>);
+</span></span></code></pre></div><p>If previous phases took 200ms, this runs after 200ms.</p>
+<hr>
+<h3 id="-phase-2-pending-callbacks">📨 Phase 2: Pending Callbacks</h3>
+<p>This phase executes certain system-level I/O callbacks. For example:</p>
+<ul>
+<li>TCP errors</li>
+<li>Some DNS errors</li>
+</ul>
+<p>You don’t usually interact with this phase directly.</p>
+<hr>
+<h3 id="-phase-3-idle-prepare">😴 Phase 3: Idle, Prepare</h3>
+<p>Used internally by libuv to prepare for the poll phase. Not exposed to users.</p>
+<hr>
+<h3 id="-phase-4-poll">📡 Phase 4: Poll</h3>
+<p>This is the <strong>heart</strong> of the Event Loop.</p>
+<ul>
+<li>Waits for I/O events (file reads, network)</li>
+<li>Executes callbacks from completed I/O operations</li>
+<li>If no events: it blocks (waits)</li>
+<li>If events in queue: processes them</li>
+<li>If timeout set by timers phase: breaks early</li>
+</ul>
+<p>Example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">fs</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;fs&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fs</span>.<span style="color:#a6e22e">readFile</span>(<span style="color:#e6db74">&#39;file.txt&#39;</span>, () =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;File read complete&#39;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>The read is queued in libuv. Once done, its callback is added to the poll queue.</p>
+<hr>
+<h3 id="-phase-5-check">⏩ Phase 5: Check</h3>
+<p>This phase runs <code>setImmediate()</code> callbacks.</p>
+<p>Example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">setImmediate</span>(() =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;This runs in the check phase&#39;</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>Useful for deferring tasks until after poll phase.</p>
+<hr>
+<h3 id="-phase-6-close-callbacks">🔒 Phase 6: Close Callbacks</h3>
+<p>Handles close events like:</p>
+<ul>
+<li><code>socket.on('close', ...)</code></li>
+<li><code>process.on('exit', ...)</code></li>
+</ul>
+<hr>
+<h3 id="-microtasks-nexttick--promises">🧬 Microtasks: NextTick &amp; Promises</h3>
+<p>These don’t belong to phases but are run <strong>between</strong> phases:</p>
+<ul>
+<li><code>process.nextTick()</code> – highest priority</li>
+<li><code>Promise.then()</code> – after nextTick</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">process</span>.<span style="color:#a6e22e">nextTick</span>(() =&gt; <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;nextTick&#39;</span>));
+</span></span><span style="display:flex;"><span>Promise.<span style="color:#a6e22e">resolve</span>().<span style="color:#a6e22e">then</span>(() =&gt; <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;Promise&#39;</span>));
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">setTimeout</span>(() =&gt; <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;Timeout&#39;</span>), <span style="color:#ae81ff">0</span>);
+</span></span></code></pre></div><p>Output:</p>
+<pre tabindex="0"><code>nextTick
+Promise
+Timeout
+</code></pre><hr>
+<h2 id="-timers-vs-immediate">⏱️ Timers vs Immediate</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">setTimeout</span>(() =&gt; <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;Timeout&#39;</span>), <span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">setImmediate</span>(() =&gt; <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;Immediate&#39;</span>));
+</span></span></code></pre></div><p>Who wins?</p>
+<ul>
+<li>If in the main module: likely <code>Timeout</code> first.</li>
+<li>If inside I/O callback: <code>Immediate</code> first.</li>
+</ul>
+<p>Why?</p>
+<p>Because when the I/O ends, we are in the <strong>poll</strong> phase, and <strong>check</strong> (immediate) runs next.</p>
+<hr>
+<h2 id="-io-and-thread-pools">🔄 I/O and Thread Pools</h2>
+<p>Node.js is single-threaded <strong>only</strong> at the JS level.</p>
+<p>libuv uses a thread pool (default: 4 threads) for:</p>
+<ul>
+<li>File system (<code>fs</code>)</li>
+<li>DNS lookups</li>
+<li>Crypto</li>
+<li>zlib compression</li>
+</ul>
+<p>You can increase it via:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>UV_THREADPOOL_SIZE<span style="color:#f92672">=</span><span style="color:#ae81ff">8</span> node app.js
+</span></span></code></pre></div><p>Example:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">crypto</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;crypto&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">10</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">crypto</span>.<span style="color:#a6e22e">pbkdf2</span>(<span style="color:#e6db74">&#39;pass&#39;</span>, <span style="color:#e6db74">&#39;salt&#39;</span>, <span style="color:#ae81ff">100000</span>, <span style="color:#ae81ff">512</span>, <span style="color:#e6db74">&#39;sha512&#39;</span>, () =&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">`Done </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">i</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>  });
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>This will run 4 at a time, queue the rest.</p>
+<hr>
+<h2 id="-cpu-bound-blocking">⚠️ CPU-bound Blocking</h2>
+<p>Node.js shines for I/O-heavy apps, not CPU-bound.</p>
+<p>Bad:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">while</span> (<span style="color:#66d9ef">true</span>) {}
+</span></span></code></pre></div><p>Freezes everything.</p>
+<p>Solution:</p>
+<ul>
+<li>Use Worker Threads (since Node 10.5+)</li>
+<li>Offload to external service</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">Worker</span> } <span style="color:#f92672">=</span> <span style="color:#a6e22e">require</span>(<span style="color:#e6db74">&#39;worker_threads&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Worker</span>(<span style="color:#e6db74">`
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">  while (true) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">`</span>, { eval<span style="color:#f92672">:</span> <span style="color:#66d9ef">true</span> });
+</span></span></code></pre></div><hr>
+<h2 id="-event-loop-execution-example">🧪 Event Loop Execution Example</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#a6e22e">setTimeout</span>(() =&gt; <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;setTimeout&#39;</span>), <span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">setImmediate</span>(() =&gt; <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;setImmediate&#39;</span>));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">fs</span>.<span style="color:#a6e22e">readFile</span>(<span style="color:#a6e22e">__filename</span>, () =&gt; {
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;readFile callback&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">setTimeout</span>(() =&gt; <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;inner setTimeout&#39;</span>), <span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">setImmediate</span>(() =&gt; <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#e6db74">&#39;inner setImmediate&#39;</span>));
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>Output:</p>
+<pre tabindex="0"><code>setTimeout
+setImmediate
+readFile callback
+inner setImmediate
+inner setTimeout
+</code></pre><p>Why?</p>
+<p>After <code>readFile</code>, we enter poll → check → timers.</p>
+<hr>
+<h2 id="-tools-to-debug-the-event-loop">🔬 Tools to Debug the Event Loop</h2>
+<h3 id="1-chrome-devtools">1. Chrome DevTools</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>node --inspect-brk index.js
+</span></span></code></pre></div><p>Use Chrome&rsquo;s <code>chrome://inspect</code></p>
+<h3 id="2-flamegraphs">2. Flamegraphs</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>npx 0x app.js
+</span></span></code></pre></div><p>Visualize hotspots in your code.</p>
+<h3 id="3-clinic-toolkit">3. <code>clinic</code> toolkit</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>npx clinic doctor -- node app.js
+</span></span></code></pre></div><p>Gives you performance bottlenecks.</p>
+<hr>
+<h2 id="-best-practices">✅ Best Practices</h2>
+<ul>
+<li>Avoid long-running synchronous functions</li>
+<li>Prefer <code>setImmediate</code> over <code>setTimeout(fn, 0)</code> inside I/O</li>
+<li>Be careful with <code>process.nextTick()</code> — it can block the loop</li>
+<li>Break large loops using <code>setImmediate</code></li>
+</ul>
+<p>Bad:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">1e9</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span>) {}
+</span></span></code></pre></div><p>Good:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-js" data-lang="js"><span style="display:flex;"><span><span style="color:#66d9ef">function</span> <span style="color:#a6e22e">chunkedLoop</span>(<span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">i</span> <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">1e9</span>) <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>  <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">i</span> <span style="color:#f92672">%</span> <span style="color:#ae81ff">1e5</span> <span style="color:#f92672">===</span> <span style="color:#ae81ff">0</span>) <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">log</span>(<span style="color:#a6e22e">i</span>);
+</span></span><span style="display:flex;"><span>  <span style="color:#a6e22e">setImmediate</span>(() =&gt; <span style="color:#a6e22e">chunkedLoop</span>(<span style="color:#a6e22e">i</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>));
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">chunkedLoop</span>();
+</span></span></code></pre></div><hr>
+<h2 id="-conclusion">🔚 Conclusion</h2>
+<p>The Event Loop is the beating heart of Node.js.</p>
+<p>Mastering it means:</p>
+<ul>
+<li>You write more efficient code</li>
+<li>You debug async issues faster</li>
+<li>You know when and why callbacks execute</li>
+</ul>
+<p>Node.js isn’t just &ldquo;async/await&rdquo; magic. It’s a carefully orchestrated dance between JavaScript, libuv, and the underlying OS.</p>
+<p>Learn the rhythm. And you’ll write code that scales like a beast.</p>
+<hr>
+</section>
+
+  <footer class="mt-12 flex flex-wrap"><a
+      class="mb-1.5 rounded-lg bg-black/[3%] px-5 py-1 no-underline hover:bg-black/[6%] ltr:mr-1.5 rtl:ml-1.5 dark:bg-white/[8%] dark:hover:bg-white/[12%]"
+      href="http://localhost:1313/tags/nodejs"
+      >nodejs</a
+    ><a
+      class="mb-1.5 rounded-lg bg-black/[3%] px-5 py-1 no-underline hover:bg-black/[6%] ltr:mr-1.5 rtl:ml-1.5 dark:bg-white/[8%] dark:hover:bg-white/[12%]"
+      href="http://localhost:1313/tags/event-loop"
+      >event loop</a
+    ><a
+      class="mb-1.5 rounded-lg bg-black/[3%] px-5 py-1 no-underline hover:bg-black/[6%] ltr:mr-1.5 rtl:ml-1.5 dark:bg-white/[8%] dark:hover:bg-white/[12%]"
+      href="http://localhost:1313/tags/javascript"
+      >javascript</a
+    ><a
+      class="mb-1.5 rounded-lg bg-black/[3%] px-5 py-1 no-underline hover:bg-black/[6%] ltr:mr-1.5 rtl:ml-1.5 dark:bg-white/[8%] dark:hover:bg-white/[12%]"
+      href="http://localhost:1313/tags/async"
+      >async</a
+    ><a
+      class="mb-1.5 rounded-lg bg-black/[3%] px-5 py-1 no-underline hover:bg-black/[6%] ltr:mr-1.5 rtl:ml-1.5 dark:bg-white/[8%] dark:hover:bg-white/[12%]"
+      href="http://localhost:1313/tags/libuv"
+      >libuv</a
+    ><a
+      class="mb-1.5 rounded-lg bg-black/[3%] px-5 py-1 no-underline hover:bg-black/[6%] ltr:mr-1.5 rtl:ml-1.5 dark:bg-white/[8%] dark:hover:bg-white/[12%]"
+      href="http://localhost:1313/tags/deep-dive"
+      >deep dive</a
+    ></footer><nav
+    class="mt-24 flex overflow-hidden rounded-xl bg-black/[3%] text-lg leading-[1.2]! *:flex *:w-1/2 *:items-center *:p-5 *:font-medium *:no-underline dark:bg-white/[8%] [&>*:hover]:bg-black/[2%] dark:[&>*:hover]:bg-white/[3%]"
+  ><a
+      class="justify-end pl-3 ltr:ml-auto rtl:mr-auto"
+      href="http://localhost:1313/posts/docker-guide/"
+      ><span>Docker for Absolute Beginners: Daily Commands Explained</span><span class="ltr:ml-1.5 rtl:mr-1.5">→</span></a
+    ></nav></article></main><footer
+  class="mx-auto flex h-[4.5rem] max-w-(--w) items-center px-8 text-xs tracking-wider uppercase opacity-60"
+>
+  <div class="mr-auto">&copy;2025<a class="link" href="http://localhost:1313/">The Compiler Journal</a></div>
+  <a class="link mx-6" href="https://gohugo.io/" rel="noopener" target="_blank"
+    >powered by hugo️️</a
+  >️
+  <a
+    class="link"
+    href="https://github.com/nanxiaobei/hugo-paper"
+    rel="noopener"
+    target="_blank"
+    >hugo-paper</a
+  >
+</footer>
+</body>
+</html>
