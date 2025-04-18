@@ -1,6 +1,6 @@
 ---
 title: "Is setTimeout(fn, 0) a Lie? What Timers in Node.js Actually Mean"
-date: 2025-04-15
+date: 2025-04-16
 description: "A deep dive into how timers actually work in Node.js. Understand what setTimeout(fn, 0) really does, explore the event loop phases, and bust the myths around zero-delay timers."
 tags: ["nodejs", "timers", "event loop", "setTimeout", "async", "javascript"]
 ---
