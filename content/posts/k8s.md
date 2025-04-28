@@ -1,15 +1,13 @@
 ---
-title: "🧵 Kubernetes Explained from Scratch: Architecture, Commands, and Complete Beginner Guide"
-date: 2025-04-27
+title: " Kubernetes Explained from Scratch: Architecture, Commands, and Complete Beginner Guide"
+date: 2025-04-28
 description: "Everything you need to know about Kubernetes — starting from why it was created, detailed architecture, key components, and almost all useful kubectl commands explained clearly with 5-line explanations. Master Kubernetes step-by-step even if you're seeing it for the first time."
 tags: ["kubernetes", "containers", "devops", "cloud", "orchestration"]
 ---
-
-# 🚀 Kubernetes Explained from Scratch: Architecture, Commands, and Complete Beginner Guide
-
+ 
 ---
 
-# 🛑 Why Kubernetes?
+# Why Kubernetes?
 
 When companies started adopting container technology (like Docker), they realized that manually managing hundreds or thousands of containers was extremely painful.  
 Containers need to be started, monitored, restarted if they crash, scaled up/down based on load, and distributed across servers.  
