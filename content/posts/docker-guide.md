@@ -1,5 +1,5 @@
 ---
-title: "Docker for Absolute Beginners: Daily Commands Explained"
+title: "Docker for Absolute Beginners: Daily Commands Explained!"
 date: 2025-04-14
 description: "A comprehensive guide to Docker for beginners with real-world examples and detailed explanations of all essential daily-used commands, including images, containers, volumes, secrets, and Docker Swarm."
 tags: ["docker", "containers", "devops","docker commands", "docker swarm"]
