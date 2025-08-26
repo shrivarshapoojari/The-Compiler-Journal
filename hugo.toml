@@ -1,4 +1,4 @@
-baseURL = 'https://shrivarshapoojari.github.io/'
+baseURL = 'https://blog.shrivarshapoojary.in/'
 
 languageCode = 'en-us'
 title = 'The Compiler Journal'
@@ -11,24 +11,20 @@ theme = "paper"
   [caches.images]
     dir = ':cacheDir/images'
 
-     
-
 [params]
+  # Configure main sections to display on homepage
+  mainSections = ["posts"]
+  
   # color style
-  color = 'linen'                          
+  color = 'linen'
 
- 
- 
- 
+  # social links
   linkedin = 'shrivarsha-poojary-960691249/'             
-  github = 'shrivarshapoojari'  
-                                
- 
+  github = 'shrivarshapoojari'
 
-
+  # profile
   avatar = 'shrivarshapoojary8095@gmail.com'                 
   name = 'Shrivarsha Poojary'
-  
 
- math = true   
- 
+  # features
+  math = true
