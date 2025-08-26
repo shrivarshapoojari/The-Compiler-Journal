@@ -1,4 +1,4 @@
-baseURL = 'https://shrivarshapoojari.github.io/'
+baseURL = 'https://shrivarshapoojari.github.io/The-Compiler-Journal/'
 
 languageCode = 'en-us'
 title = 'The Compiler Journal'
@@ -15,20 +15,19 @@ theme = "paper"
 
 [params]
   # color style
-  color = 'linen'                          
+  color = 'linen'
+  
+  # main sections
+  mainSections = ['posts']
 
- 
- 
- 
+  # social links
   linkedin = 'shrivarsha-poojary-960691249/'             
   github = 'shrivarshapoojari'  
-                                
- 
 
-
+  # profile
   avatar = 'shrivarshapoojary8095@gmail.com'                 
   name = 'Shrivarsha Poojary'
-  
 
- math = true   
+  # features
+  math = true
  
