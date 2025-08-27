@@ -5,7 +5,7 @@ title = 'The Compiler Journal'
 theme = "paper"
 
 [pagination]
-  pagerSize = 3
+  pagerSize = 5
 
 [caches]
   [caches.images]
@@ -21,10 +21,13 @@ theme = "paper"
   # social links
   linkedin = 'shrivarsha-poojary-960691249/'             
   github = 'shrivarshapoojari'
+  portfolio = 'https://www.shrivarshapoojary.in/'
+
 
   # profile
   avatar = 'shrivarshapoojary8095@gmail.com'                 
   name = 'Shrivarsha Poojary'
+   
 
   # features
   math = true
