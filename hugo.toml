@@ -4,6 +4,10 @@ languageCode = 'en-us'
 title = 'The Compiler Journal'
 theme = "paper"
 
+# RSS Feed Configuration
+rssLimit = 20  # Number of items in RSS feed (default is unlimited)
+copyright = "Copyright © 2025 Shrivarsha Poojary"
+
 [pagination]
   pagerSize = 5
 
@@ -18,15 +22,24 @@ theme = "paper"
   # color style
   color = 'linen'
 
+  # RSS Feed Description
+  description = "Deep dives into programming, distributed systems, web technologies, and software engineering concepts. From Docker and Kubernetes to algorithms and system design."
+
   # social links
   linkedin = 'shrivarsha-poojary-960691249/'             
   github = 'shrivarshapoojari'
   portfolio = 'https://www.shrivarshapoojary.in/'
+  rss = true  # Enable RSS feed icon
 
 
   # profile
   avatar = 'shrivarshapoojary8095@gmail.com'                 
   name = 'Shrivarsha Poojary'
+
+  # Author information for RSS feeds
+  [params.author]
+    name = "Shrivarsha Poojary"
+    email = "shrivarshapoojary8095@gmail.com"
    
 
   # features
